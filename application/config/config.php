@@ -25,6 +25,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $config['base_url'] = '';
 
+
+
+$config['clickatel'] = array(
+                            'user'      => 'sourabh1',
+                            'password'  => 'smssourabh',
+                            'api_id'    => 'zpJI3r-kTmOm7CQgWce0Fg=='
+                        );
+
 /*
 |--------------------------------------------------------------------------
 | Index File
@@ -158,7 +166,7 @@ $config['composer_autoload'] = FALSE;
 | DO NOT CHANGE THIS UNLESS YOU FULLY UNDERSTAND THE REPERCUSSIONS!!
 |
 */
-$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-';
+$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-\@';
 
 /*
 |--------------------------------------------------------------------------
@@ -324,7 +332,7 @@ $config['cache_query_string'] = FALSE;
 | https://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = '';
+$config['encryption_key'] = 'amlcokgn38sn29fj8fn5d0t59v4nf38n597r75b7x7z1';
 
 /*
 |--------------------------------------------------------------------------
