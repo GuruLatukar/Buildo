@@ -25,13 +25,13 @@ $config = [
 								[
 									'field' => 'email',
 									'label' => 'Email',
-									'rules' => 'required|valid_email|is_unique[customers.email]'
+									'rules' => 'required|valid_email|is_unique[customers.mobilenumber]'
 								],
 
 								[
 									'field' => 'emailotp',
 									'label' => 'Email OTP',
-									'rules' => 'required|is_unique[customers.emailotp]'
+									'rules' => 'required'
 								],
 
 								[
@@ -49,7 +49,7 @@ $config = [
 								[
 									'field' => 'altmobileno',
 									'label' => 'Alternative Mobile Number',
-									'rules' => 'trim|required|exact_length[10]|regex[/[7-9]{1}[0-9]{9}/]|is_unique[customers.alt_m_number]]'	
+									'rules' => 'trim|required|exact_length[10]|regex_match[/[7-9]{1}[0-9]{9}/]|is_unique[customers.alt_m_number]'	
 								],
 
 								[

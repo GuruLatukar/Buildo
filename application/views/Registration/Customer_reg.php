@@ -58,26 +58,24 @@
 	   		
 	   		<legend>Customer Registration Form</legend>
 	   		
-			<div class="form-group">
+	   		<div class="form-group">
 		      <label class="col-lg-2 control-label">Full Name</label>
 		      <div class="col-lg-2">
-		      <?php echo form_input(['name'=>'fname','class'=>'form-control','placeholder'=>'Enter First Name','title'=>'Enter Your First Name','required'=>'required','id'=>'fname']); ?>
+		      <?php echo form_input(['name'=>'fname','class'=>'form-control','placeholder'=>'Enter First Name','title'=>'Enter Your First Name','required'=>'required','id'=>'fname','value'=>set_value('fname')]); ?>
 		      </div> 
 
 		     <div class="col-lg-2">
-		        <?php echo form_input(['name'=>'mname','class'=>'form-control','placeholder'=>'Enter Middle Name','title'=>'Enter Your Middle Name','required'=>'required','id'=>'mname']); ?>
+		        <?php echo form_input(['name'=>'mname','class'=>'form-control','placeholder'=>'Enter Middle Name','title'=>'Enter Your Middle Name','required'=>'required','id'=>'mname','value'=>set_value('mname')]); ?>
 		      </div>
 
 		      <div class="col-lg-2">
-		        <?php echo form_input(['name'=>'lname','class'=>'form-control','placeholder'=>'Enter Last Name','title'=>'Enter Your Last Name','required'=>'required','id'=>'lname']); ?>
+		        <?php echo form_input(['name'=>'lname','class'=>'form-control','placeholder'=>'Enter Last Name','title'=>'Enter Your Last Name','required'=>'required','id'=>'lname','value'=>set_value('lname')]); ?>
 		      </div>
 		    </div>
 			<!-- Errors -->
 		    <div class="form-group">
 		    	<div class="col-lg-5 col-lg-offset-2 errorc">
-		    		<?php echo form_error('fname'); ?>
-		    		<?php echo form_error('mname'); ?>
-		    		<?php echo form_error('lname'); ?>
+		    		<?php echo form_error('fname'); echo form_error('mname'); echo form_error('lname'); ?>
 		    	</div>
 		    </div>
 			
@@ -85,7 +83,7 @@
 		      <label class="col-lg-2 control-label">Email</label>
 				<div class="col-lg-3">
 				    <div class="input-group">
-				      <?php echo form_input(['name'=>'email','class'=>'form-control','placeholder'=>'Enter Email And Validate','title'=>'Enter Your Email ID','id'=>'email','required'=>'required']); ?>
+				      <?php echo form_input(['name'=>'email','class'=>'form-control','placeholder'=>'Enter Email And Validate','title'=>'Enter Your Email ID','id'=>'email','required'=>'required','value'=>set_value('email')]); ?>
 				      <span class="input-group-btn">
 				        <a href="<?= base_url('index.php/customer/email_otp'); ?>" id="target_link1" class="btn btn-primary" onclick="prepare_link1();" title="Click Validate Button To Get OTP On Your email">Validate</a>
 				      </span>
@@ -97,7 +95,7 @@
 				      <span class="input-group-btn">
 				        <a href="<?= base_url('index.php/customer/email_otp'); ?>" id="target_link2" class="btn btn-primary" onclick="prepare_link2();" title="Cilck Resend Button To Get New OTP">Resend</a>
 				      </span>
-				      <?php echo form_input(['name'=>'emailotp','class'=>'form-control','placeholder'=>'Enter Email OTP','title'=>'Enter The OTP Sent On Your Email ID','required'=>'required','id'=>'eotp']); ?>
+				      <?php echo form_input(['name'=>'emailotp','class'=>'form-control','placeholder'=>'Enter Email OTP','title'=>'Enter The OTP Sent On Your Email ID','required'=>'required','id'=>'eotp','value'=>set_value('emailotp')]); ?>
 				      <span class="input-group-btn">
 				         <a href="<?= base_url('index.php/customer/email_otp'); ?>" id="target_link3" class="btn btn-primary" onclick="prepare_link3();" title="Click Confirm Button To Proceed">Confirm</a>
 				      </span>
@@ -108,8 +106,7 @@
 			<!-- Errors -->
 		    <div class="form-group">
 		    	<div class="col-lg-5 col-lg-offset-2 errorc">
-		    		<?php echo form_error('email'); ?>
-		    		<?php echo form_error('emailotp'); ?>
+		    		<?php echo form_error('email'); echo form_error('emailotp'); ?>
 		    	</div>
 		    </div>
 
@@ -117,7 +114,7 @@
 		      <label class="col-lg-2 control-label">Mobile No.</label>
 				<div class="col-lg-3">
 				    <div class="input-group">
-				      <?php echo form_input(['type'=>'number','name'=>'mobileno','class'=>'form-control','placeholder'=>'Enter Mobile No.','title'=>'Enter Your Mobile Number','required'=>'required','id'=>'mobileno']); ?>
+				      <?php echo form_input(['type'=>'number','name'=>'mobileno','class'=>'form-control','placeholder'=>'Enter Mobile No.','title'=>'Enter Your Mobile Number','required'=>'required','id'=>'mobileno','value'=>set_value('mobileno')]); ?>
 				      <span class="input-group-btn">
 				         <a href="<?= base_url('index.php/Customer/mobile_otp'); ?>" id="target_link4" class="btn btn-primary" onclick="prepare_link4();" title="Click Validate Button To Get OTP On Your Mobile">Validate</a>
 				      </span>
@@ -129,7 +126,7 @@
 				    <span class="input-group-btn">
 				         <?= anchor('customer/m_otp_resend','Resend',['class'=>'btn btn-primary','title'=>'Click Resend Button To Get New OTP']) ?>	
 				    </span>
-				      <?php echo form_input(['name'=>'mobileotp','class'=>'form-control','placeholder'=>'Enter Mobile OTP','title'=>'Enter The OTP Sent On Your Mobile Number','required'=>'required']); ?>
+				      <?php echo form_input(['name'=>'mobileotp','class'=>'form-control','placeholder'=>'Enter Mobile OTP','title'=>'Enter The OTP Sent On Your Mobile Number','required'=>'required','value'=>set_value('mobileotp')]); ?>
 				      <span class="input-group-btn">
 				        <?= anchor('customer/m_otp_val','Confirm',['class'=>'btn btn-primary','title'=>'Click Confirm Button To Proceed']) ?>	
 				      </span>
@@ -140,15 +137,14 @@
 			<!-- Errors -->
 		    <div class="form-group">
 		    	<div class="col-lg-5 col-lg-offset-2 errorc">
-		    		<?php echo form_error('mobileno'); ?>
-		    		<?php echo form_error('mobileotp'); ?>
+		    		<?php echo form_error('mobileno'); echo form_error('mobileotp'); ?>
 		    	</div>
 		    </div>
 					
 			<div class="form-group">
 		      <label class="col-lg-2 control-label">Alternative Mobile No.</label>
 				<div class="col-lg-3">
-					<?php echo form_input(['maxlength'=>'10','type'=>'number','name'=>'altmobileno','class'=>'form-control','placeholder'=>'Enter Alternative Mobile No.','title'=>'Enter Alternative Mobile Number','required'=>'required']); ?>
+					<?php echo form_input(['maxlength'=>'10','type'=>'number','name'=>'altmobileno','class'=>'form-control','placeholder'=>'Enter Alternative Mobile No.','title'=>'Enter Alternative Mobile Number','required'=>'required','value'=>set_value('altmobileno')]); ?>
 				</div>
 			</div>
 
@@ -190,7 +186,7 @@
 		    <div class="form-group">
 		      <label class="col-lg-2 control-label">Address</label>
 		      <div class="col-lg-5">
-		        <?php echo form_textarea(['name'=>'address','class'=>'form-control','rows'=>'3','placeholder'=>'Enter Address','title'=>'Enter Your Address','required'=>'required']);?>
+		        <?php echo form_textarea(['name'=>'address','class'=>'form-control','rows'=>'3','placeholder'=>'Enter Address','title'=>'Enter Your Address','required'=>'required','value'=>set_value('address')]);?>
 		      </div>
 		   </div>
 
@@ -204,7 +200,7 @@
 			<div class="form-group">
 				<div class="checkbox">
 				 	<div class="col-lg-2 control-label"></div>
-				 	<?php echo form_checkbox(['name'=>'2stepv','style'=>'width:25px; height:25px;','title'=>'Will Ask To Enter Verification Code Every Time You Log-In And Your Mobile No. And Email ID Will Be Encrypted']); ?>
+				 	<?php echo form_checkbox(['name'=>'2stepv','style'=>'width:25px; height:25px;','title'=>'Will Ask To Enter Verification Code Every Time You Log-In And Your Mobile No. And Email ID Will Be Encrypted','value'=>'1']); ?>
 				 	<h4 style="padding-left: 205px;">
 				 	<lable title="Will Ask To Enter Verification Code Every Time You Log-In And Your Mobile No. And Email ID Will Be Encrypted">Enable Stronger Security For Your Account With 2-Step Verification</lable></h4>
 				</div>
