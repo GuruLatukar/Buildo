@@ -1,9 +1,10 @@
-.errorc
-{
-	color:#ff0000;
+*{
+    margin-bottom: -15px;
 }
 
-* 
-{
-    margin-bottom: -15px;
-} 
+.errorc{
+	color:#FF0000;
+}
+
+
+

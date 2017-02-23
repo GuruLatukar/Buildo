@@ -21,4 +21,19 @@ class Registrationmodel extends CI_Model {
 			return FALSE;
 		}
 	}
+
+	public function get_mobileno($mobileno)
+	{
+		$q = $this->db->where('mobilenumber',$mobileno)
+					  ->get('customers');
+
+		if( $q->num_rows() )
+		{
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
 }

@@ -55,7 +55,7 @@ class Customer extends MY_Controller {
 				{
 					if( $vcode )
 					{
-						echo "<br/><br/><br/><br/><span style=\"color:#000000; font-size:20px; padding:200px; margin-top: 80px;\"><b>IMPORTANT MSG:</b> Please note down this alternative verification code for 2 step verification. <b>$vcode<b> </span>";
+						$this->session->set_flashdata("fb","IMPORTANT MSG: Please note down this alternative verification code for 2 step verification : " . "$vcode");
 					}
 					else
 					{
@@ -66,13 +66,14 @@ class Customer extends MY_Controller {
 				}
 				else
 				{
-					echo "<br/><br/><br/><br/><span style=\"color:#ff0000; font-size:20px; padding:200px; margin-top: 80px;\">Database error please try again</span>";
+					$this->session->set_flashdata("fb","Database error please try again");
 				}
 			}
 			else
 			{
-				echo "<br/><br/><br/><br/><span style=\"color:#ff0000; font-size:20px; padding:200px; margin-top: 80px;\">Email Address / Mobile Number Does not match with Registered one <b>or</b> Invalid OTP Entered.</span>";
+				$this->session->set_flashdata("fb","Email Address / Mobile Number Does not match with Registered one <b>or</b> Invalid OTP Entered");
 			}
+			redirect("customer/creg");
 		}
 		else
 		{
@@ -80,104 +81,229 @@ class Customer extends MY_Controller {
 		}
 	}
 
-	public function email_otp($email,$otpp)
+	public function val_send_email()
 	{
-		$this->load->model('registrationmodel','regmodel');
+		$email=$this->input->post('email');
+		$resend=$this->input->post('resend');
+		$val_e=$this->input->post('val_e');
 
-		if ( $this->regmodel->get_email($email) )
+		if ( $email )
 		{
-		    echo "<br/><br/><br/><br/><span style=\"color:#0000ff; font-size:20px; padding:200px; margin-top: 80px;\">Email Adrress is already exists please go back and enter another Email Address</span>";
+			if(  $this->form_validation->run('custreg_email_rules') )
+			{
+				$this->load->model('registrationmodel','regmodel');
+				if( $this->regmodel->get_email($email) )
+				{
+					echo "<script>document.getElementById('eiemail').style.background = '#EE6960';</script>";
+					echo "Email Address already exists";
+					echo "<script>$('#email').prop('disabled',true);</script>";
+				}
+				else 
+				{
+					echo "<script>document.getElementById('eiemail').style.background = '#E9EE60';</script>";
+					if( !$val_e )
+					{
+						$this->generate_email($email,$resend);
+					}
+				}
+			}
+			else 
+			{
+				echo "<script>document.getElementById('eiemail').style.background = '#EE6960';</script>";
+				echo "Invalid Email Address"; 
+			}
+		}
+		else 
+		{
+			echo "<script>document.getElementById('eiemail').style.background = '#FFFFFF';</script>";
+			echo "Enter Email Address"; 
+		}
+	}
+
+	public function generate_email($email,$resend)
+	{
+		$this->session->set_userdata('email_state','1');
+		$config = Array(
+							'protocol' => 'smtp',
+							'smtp_host' => 'ssl://smtp.googlemail.com',
+							'smtp_port' => 465,
+							'smtp_user' => 'custemails@gmail.com',
+							'smtp_pass' => 'build123'
+						);
+
+		$eotp=random_string('alnum', 6);
+
+		$this->session->set_userdata('email',$email);
+		$this->session->set_userdata('eotp',$eotp);
+
+		$this->load->library('email',$config);
+		$this->email->set_newline("\r\n");
+
+		$this->email->from('custemails@gmail.com','Buildo');
+		$this->email->to($email);
+		$this->email->subject('OTP From Buildoholic');
+		$this->email->message($eotp);
+
+		if( $resend=='1' && $this->email->send() )
+		{
+			echo "<script>document.getElementById('eiemail').style.background = '#89F17B';</script>";
+			echo "New OTP sent on your Email Address";
+		}
+		else if ( $resend!='1' && $this->email->send() )     
+		{
+			echo "<script>document.getElementById('eiemail').style.background = '#89F17B';</script>";
+			echo "OTP sent on your Email Address";
 		}
 		else
 		{
-				if ($email!='1' && $otpp=='0')
-				{
-					$config = Array(
-						'protocol' => 'smtp',
-						'smtp_host' => 'ssl://smtp.googlemail.com',
-						'smtp_port' => 465,
-						'smtp_user' => 'custemails@gmail.com',
-						'smtp_pass' => 'build123'
-					);
-
-					$otp=random_string('alnum', 6);
-
-					$this->session->set_userdata('email',$email);
-					$this->session->set_userdata('eotp',$otp);
-
-					$this->session->set_userdata('mobileno','8234567890');
-					$this->session->set_userdata('motp','12345');
-
-					$this->load->library('email',$config);
-					$this->email->set_newline("\r\n");
-
-					$this->email->from('custemails@gmail.com','Buildo');
-					$this->email->to($email);
-					$this->email->subject('OTP From Buildoholic');
-					$this->email->message($otp);
-
-					if( $this->email->send() )
-					{
-						echo "<br/><br/><br/><br/><span style=\"color:#0000ff; font-size:20px; padding:200px; margin-top: 80px;\">OTP is sent successfully on your Email Address please go back and enter the OTP to proceed further</span>";
-					}
-					else     
-					{
-						// show_error($this->email->print_debugger());
-						echo "<br/><br/><br/><br/><span style=\"color:#ff0000; font-size:20px; padding:200px; margin-top: 80px;\">You have entered invalid Email Address please go back and enter valid Email Address</span>";
-					}
-				} 
-				else if( $email=='2' || $email!='2' && $otpp!='0')
-				{
-					if( $email!='2' )
-					{
-						if( $this->session->userdata('email')==$email && $this->session->userdata('eotp')==$otpp )
-						{
-							echo "<br/><br/><br/><br/><span style=\"color:#0000ff; font-size:20px; padding:200px; margin-top: 80px;\">You have entered valid OTP, Email has been registered succefully go back and proceed further</span>";
-						}
-						else
-						{
-							echo "<br/><br/><br/><br/><span style=\"color:#ff0000; font-size:20px; padding:200px; margin-top: 80px;\">Invalid OTP go back and try again and make sure Email Address is entered</span>";
-						}	
-					}
-					else
-					{
-						echo "<br/><br/><br/><br/><span style=\"color:#ff0000; font-size:20px; padding:200px; margin-top: 80px;\">Please go back and enter valid OTP</span>";
-					}
-				}
-				else
-				{
-					echo "<br/><br/><br/><br/><span style=\"color:#ff0000; font-size:20px; padding:200px; margin-top: 80px;\">Please go back and enter Valid Email Address</span>";
-				}
+			echo "<script>document.getElementById('eiemail').style.background = '#EE6960';</script>";
+			// show_error($this->email->print_debugger());
+			echo "Enter Email Address one more time";
 		}
-		
+		$this->session->unset_userdata('email_state');
 	}
 
-	public function mobile_otp($mobileno,$otpp)
+	public function val_email_otp()
 	{
-		$this->load->library('clickatel');
+		$email=$this->input->post('email');
+		$eotp=$this->input->post('eotp');
 
-		$otp=random_string('alnum', 6);
-
-		if ($mobileno!='1' && $otpp=='0')
+		if( !$email )
 		{
-			$params = array('user' => 'sourabh1', 'password' => 'smssourabh', 'api_id' => 'zpJI3r-kTmOm7CQgWce0Fg==');  
-	        $this->load->library('clickatel', $params);
-
-	        $this->clickatel->send_sms($mobileno, $top);
-
-	        $this->session->set_userdata('mobileno','8234567890');
-			$this->session->set_userdata('motp','12345');
-
-	        // if(  )
-	        // {
-	        // 	echo "<br/><br/><br/><br/><span style=\"color:#0000ff; font-size:20px; padding:200px; margin-top: 80px;\">OTP is sent successfully on your Mobile Number please go back and enter the OTP to proceed further</span>";
-	        // }
-	        // else
-	        // {
-	        // 	echo "<br/><br/><br/><br/><span style=\"color:#ff0000; font-size:20px; padding:200px; margin-top: 80px;\">You have entered invalid Mobile Number please go back and enter valid Mobile Number</span>";
-	        // }
-
+			echo "<script>document.getElementById('eiemail').style.background = '#FFFFFF';</script>";
+			echo "Enter Email Address";
+		}
+		else if( !$eotp )
+		{
+			echo "<script>document.getElementById('eieotp').style.background = '#FFFFFF';</script>";
+			echo "Enter OTP";
+		}
+		else if( $email && $eotp )
+		{
+			if ( $this->session->userdata('email')==$email && $this->session->userdata('eotp')==$eotp )
+			{
+				echo "<script>document.getElementById('eiemail').style.background = '#89F17B'; document.getElementById('eieotp').style.background = '#89F17B';</script>";
+				echo "";
+			}
+			else
+			{
+				echo "<script>document.getElementById('eieotp').style.background = '#EE6960';</script>";
+				echo "Invalid OTP";
+			}
 		}
 	}
 
+	public function val_send_mobileno()
+	{
+		$mobileno=$this->input->post('mobileno');
+		$resend=$this->input->post('resend');
+		$val_e=$this->input->post('val_e');
+
+		if ( $mobileno )
+		{
+			if(  $this->form_validation->run('custreg_mobileno_rules') )
+			{
+				$this->load->model('registrationmodel','regmodel');
+				if( $this->regmodel->get_mobileno($mobileno) )
+				{
+					echo "<script>document.getElementById('eimobileno').style.background = '#EE6960';</script>";
+					echo "Mobile Number already exists";
+					echo "<script>$('#mobileno').prop('disabled',true);</script>";
+				}
+				else 
+				{
+					echo "<script>document.getElementById('eimobileno').style.background = '#E9EE60';</script>";
+					if( !$val_e )
+					{
+						$this->generate_motp($mobileno,$resend);
+					}
+				}
+			}
+			else 
+			{
+				echo "<script>document.getElementById('eimobileno').style.background = '#EE6960';</script>";
+				echo "Invalid Mobile Number"; 
+			}
+		}
+		else 
+		{
+			echo "<script>document.getElementById('eimobileno').style.background = '#FFFFFF';</script>";
+			echo "Enter Mobile Number"; 
+		}
+	}
+
+	public function generate_motp($mobileno,$resend)
+	{
+		$this->session->set_userdata('motp_state','1');
+
+		$motp=random_string('alnum', 6);
+		$this->session->set_userdata('mobileno','8234567891');
+		$this->session->set_userdata('motp','12345');
+		//send mobile otp
+
+		// $authKey = "FChQJlbDctQsXRKQFGPpd1MFeExU5L1wnyPhsmVt1OoOO9aDlUlSeR4i7W5o1zjZo0GMhA6np5JNaka4jVYip0fO4audjH5MZodwWiqdJK4UMCFrQlPH_QQ-0PpRDzy4T70pjopliwaCiN8L2KAuGw==";
+		// $mobileNumbers = $mobileno;
+		// $senderId = "default";
+		// $message = urlencode($motp);
+		// $route="4";
+		// $postData = array('authkey' => $authKey,'mobiles' => $mobileNumbers,'message' => $message,'sender' => $senderId,'route' =>$route);
+		// $url="http://api.msg91.com/api/sendhttp.php";
+		// $ch = curl_init();
+		// curl_setopt_array($ch, array(CURLOPT_URL => $url,CURLOPT_RETURNTRANSFER => true,CURLOPT_POST => true,CURLOPT_POSTFIELDS => $postData));
+		// $output = curl_exec($ch);
+		// if(curl_errno($ch)){
+		// echo 'error:' . curl_error($ch);
+		// }
+		// curl_close($ch);
+		// echo $output;
+
+		//send mobile otp
+
+		if( $resend=='1' /*&& validate mobile otp send*/ )
+		{
+			echo "<script>document.getElementById('eimobileno').style.background = '#89F17B';</script>";
+			echo "New OTP sent on your Mobile Number";
+		}
+		else if ( $resend!='1' /*&& validate mobile otp send*/ )     
+		{
+			echo "<script>document.getElementById('eimobileno').style.background = '#89F17B';</script>";
+			echo "OTP sent on your Mobile Number";
+		}
+		else
+		{
+			echo "<script>document.getElementById('eimobileno').style.background = '#EE6960';</script>";
+			echo "Enter Mobile Number one more time";
+		}
+		$this->session->unset_userdata('motp_state');
+	}
+
+	public function val_mobile_otp()
+	{
+		$mobileno=$this->input->post('mobileno');
+		$motp=$this->input->post('motp');
+
+		if( !$mobileno )
+		{
+			echo "<script>document.getElementById('eimobileno').style.background = '#FFFFFF';</script>";
+			echo "Enter Mobile Number";
+		}
+		else if( !$motp )
+		{
+			echo "<script>document.getElementById('eimotp').style.background = '#FFFFFF';</script>";
+			echo "Enter OTP";
+		}
+		else if( $mobileno && $motp )
+		{
+			if ( $this->session->userdata('mobileno')==$mobileno && $this->session->userdata('motp')==$motp )
+			{
+				echo "<script>document.getElementById('eimobileno').style.background = '#89F17B'; document.getElementById('eimotp').style.background = '#89F17B';</script>";
+				echo "";
+			}
+			else
+			{
+				echo "<script>document.getElementById('eimotp').style.background = '#EE6960';</script>";
+				echo "Invalid OTP";
+			}
+		}
+	}
 }
